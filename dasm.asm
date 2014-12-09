@@ -46,5 +46,10 @@ start:
 	mov ds, ax
 
 	call parse_param
+	fopen filename, handle
+	fread handle, input_buffer, input_buffer_size, characters_read
+	printbuf input_buffer, characters_read
+	exit 0
+	
 code_seg ends
 end start

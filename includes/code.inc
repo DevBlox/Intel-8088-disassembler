@@ -5,20 +5,23 @@ parse_param proc
 
 	xor ch, ch
 	mov cl, es:[80h]
-	lea si, es:[81h]
-	lea di, filename
-	mov bx, 0
+	mov bx, 81h
 	cmp cl, 0
 	je  no_param
+	inc bx
+	dec cl
+	lea di, filename
+	mov si, 0
 	
 param_loop:
 	cmp bx, fbufsize
 	je @@exit
-	mov al, byte ptr [si + bx]
+	mov al, byte ptr es:[si + bx]
 	cmp al, ' '
 	je @@exit
-	mov byte ptr [di + bx], al
-	inc bx
+	mov byte ptr [di], al
+	inc si
+	inc di
 	loop param_loop
 	
 	jmp @@exit
@@ -29,6 +32,6 @@ no_param:
 	exit 0
 	
 @@exit:
-	mov byte ptr [di + bx], 0
+	mov byte ptr [di], 0
 	ret
 parse_param endp
