@@ -52,9 +52,15 @@ start:
 	param_parse result_file
 	call check_help
 	fopen filename, handle
+	fcreate result_file, result_handle
+	
+@@repeat:
 	fread handle, input_buffer, input_buffer_size, characters_read
 	printbuf input_buffer, characters_read
-	fcreate result_file, result_handle
+	mov ax, input_buffer_size
+	cmp ax, characters_read
+	je @@repeat
+	
 	exit 0
 	
 code_seg ends
