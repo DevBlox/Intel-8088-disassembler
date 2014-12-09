@@ -1,5 +1,8 @@
 ;====================================
-; Disassembler of .exe files
+; Disassembler of COM files
+;
+; Supports instructions specified
+; by the lecturer
 ;
 ; Intel 8088 architecture
 ; Turbo Assembler
@@ -46,6 +49,7 @@ start:
 	mov ds, ax
 
 	call parse_param
+	call check_help
 	fopen filename, handle
 	fread handle, input_buffer, input_buffer_size, characters_read
 	printbuf input_buffer, characters_read

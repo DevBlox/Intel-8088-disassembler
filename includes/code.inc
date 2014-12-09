@@ -2,7 +2,6 @@
 ; Parses parameters into buffer
 ;====================================
 parse_param proc
-
 	xor ch, ch
 	mov cl, es:[80h]
 	mov bx, 81h
@@ -35,3 +34,26 @@ no_param:
 	mov byte ptr [di], 0
 	ret
 parse_param endp
+;====================================
+; Checks if the parameter parsed is '/?'
+;====================================
+check_help proc
+	mov al, filename[0]
+	cmp al, '/'
+	je @@stage2
+	jmp @@not_match
+	
+@@stage2:
+	mov al, filename[1]
+	cmp al, '?'
+	je @@matches
+	jmp @@not_match
+	
+@@matches:
+	print description_msg
+	print help_msg
+	exit 0
+	
+@@not_match:
+	ret
+check_help endp
