@@ -57,6 +57,26 @@ fread macro handle, buffer, buffersize, count
 	mov count, ax
 endm
 ;====================================
+; Creates a file
+;====================================
+fcreate macro filename, res_handle
+	local @@error
+	local @@continue
+	lea dx, filename
+	mov cx, 6
+	mov ah, 3Ch
+	int 21h
+	jc @@error
+	jmp @@continue
+	
+@@error:
+	print create_fail
+	exit 0
+	
+@@continue:
+	mov res_handle, ax
+endm
+;====================================
 ; Prints buffer contents
 ;====================================
 printbuf macro buffer, count
@@ -65,4 +85,11 @@ printbuf macro buffer, count
 	mov cx, count
 	lea dx, buffer
 	int 21h
+endm
+;====================================
+; A utility for parameter parsing
+;====================================
+param_parse macro buffer
+	lea di, buffer
+	call parse_param
 endm

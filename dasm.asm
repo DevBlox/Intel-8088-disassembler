@@ -48,11 +48,13 @@ start:
 	mov ax, seg data_seg
 	mov ds, ax
 
-	call parse_param
+	param_parse filename
+	param_parse result_file
 	call check_help
 	fopen filename, handle
 	fread handle, input_buffer, input_buffer_size, characters_read
 	printbuf input_buffer, characters_read
+	fcreate result_file, result_handle
 	exit 0
 	
 code_seg ends

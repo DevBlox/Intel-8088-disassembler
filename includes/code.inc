@@ -1,5 +1,6 @@
 ;====================================
 ; Parses parameters into buffer
+; di must have effective address ready
 ;====================================
 parse_param proc
 	xor ch, ch
@@ -9,12 +10,10 @@ parse_param proc
 	je  no_param
 	inc bx
 	dec cl
-	lea di, filename
-	mov si, 0
+	mov si, parameter_offset
+	sub cx, si ; Get actual counter
 	
 param_loop:
-	cmp bx, fbufsize
-	je @@exit
 	mov al, byte ptr es:[si + bx]
 	cmp al, ' '
 	je @@exit
@@ -32,6 +31,8 @@ no_param:
 	
 @@exit:
 	mov byte ptr [di], 0
+	inc si
+	mov parameter_offset, si
 	ret
 parse_param endp
 ;====================================
