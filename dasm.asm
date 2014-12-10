@@ -49,8 +49,8 @@ start:
 	mov ds, ax
 
 	param_parse filename
-	param_parse result_file
 	call check_help
+	param_parse result_file
 	fopen filename, handle
 	fcreate result_file, result_handle
 	

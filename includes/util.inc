@@ -4,6 +4,7 @@
 print macro string
 	lea dx, string
 	mov ah, 09h
+	xor al, al
 	int 21h
 endm
 ;====================================

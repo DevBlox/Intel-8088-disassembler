@@ -1,0 +1,138 @@
+1000 1000 mod reg r/m [poslinkis]– MOV registras -> registras/atmintis
+1000 1001 mod reg r/m [poslinkis]– MOV registras <-> registras/atmintis
+1000 1010 mod reg r/m [poslinkis]– MOV registras <-> registras/atmintis
+1000 1011 mod reg r/m [poslinkis]– MOV registras <-> registras/atmintis
+1000 1110 mod 0sr r/m [poslinkis] – MOV segmento registras <-> registras/atmintis
+1000 1100 mod 0sr r/m [poslinkis] – MOV segmento registras <-> registras/atmintis
+1010 0000 ajb avb – MOV akumuliatorius <- atmintis
+1010 0001 ajb avb – MOV akumuliatorius <- atmintis
+1010 0010 ajb avb – MOV atmintis <- akumuliatorius
+1010 0011 ajb avb – MOV atmintis <- akumuliatorius
+1011 0000 bojb [bovb] – MOV registras <- betarpiškas operandas
+1011 0001 bojb [bovb] – MOV registras <- betarpiškas operandas
+1011 0010 bojb [bovb] – MOV registras <- betarpiškas operandas
+1011 0100 bojb [bovb] – MOV registras <- betarpiškas operandas
+1011 0011 bojb [bovb] – MOV registras <- betarpiškas operandas
+1011 0101 bojb [bovb] – MOV registras <- betarpiškas operandas
+1011 0110 bojb [bovb] – MOV registras <- betarpiškas operandas
+1011 0111 bojb [bovb] – MOV registras <- betarpiškas operandas
+1011 1000 bojb [bovb] – MOV registras <- betarpiškas operandas
+1011 1001 bojb [bovb] – MOV registras <- betarpiškas operandas
+1011 1010 bojb [bovb] – MOV registras <- betarpiškas operandas
+1011 1100 bojb [bovb] – MOV registras <- betarpiškas operandas
+1011 1011 bojb [bovb] – MOV registras <- betarpiškas operandas
+1011 1101 bojb [bovb] – MOV registras <- betarpiškas operandas
+1011 1110 bojb [bovb] – MOV registras <- betarpiškas operandas
+1011 1111 bojb [bovb] – MOV registras <- betarpiškas operandas
+1100 0110 mod 000 r/m [poslinkis] bojb [bovb] – MOV registras/atmintis <- betarpiškas operandas
+1100 0111 mod 000 r/m [poslinkis] bojb [bovb] – MOV registras/atmintis <- betarpiškas operandas
+0000 0110 – PUSH segmento registras
+0000 1110 – PUSH segmento registras
+0001 0110 – PUSH segmento registras
+0001 1110 – PUSH segmento registras
+0101 0000 – PUSH registras (odinis)
+0101 0001 – PUSH registras (odinis)
+0101 0010 – PUSH registras (odinis)
+0101 0100 – PUSH registras (odinis)
+0101 0011 – PUSH registras (odinis)
+0101 0101 – PUSH registras (odinis)
+0101 0110 – PUSH registras (odinis)
+0101 0111 – PUSH registras (odinis)
+1111 1111 mod 110 r/m [poslinkis] – PUSH registras/atmintis
+0000 0111 – POP segmento registras
+0000 1111 – POP segmento registras
+0001 0111 – POP segmento registras
+0001 1111 – POP segmento registras
+0101 1000 – POP registras (odinis)
+0101 1001 – POP registras (odinis)
+0101 1010 – POP registras (odinis)
+0101 1100 – POP registras (odinis)
+0101 1011 – POP registras (odinis)
+0101 1101 – POP registras (odinis)
+0101 1110 – POP registras (odinis)
+0101 1111 – POP registras (odinis)
+1000 1111 mod 000 r/m [poslinkis] – POP registras/atmintis
+0000 0000 mod reg r/m [poslinkis] – ADD registras += registras/atminti
+0000 0010 mod reg r/m [poslinkis] – ADD registras += registras/atminti
+0000 0011 mod reg r/m [poslinkis] – ADD registras += registras/atminti
+0000 0001 mod reg r/m [poslinkis] – ADD registras += registras/atminti
+0000 0100 bojb [bovb] – ADD akumuliatorius += betarpiškas operandas
+0000 0101 bojb [bovb] – ADD akumuliatorius += betarpiškas operandas
+1000 0000 mod 000 r/m [poslinkis] bojb [bovb] – ADD registras/atmintis += betarpiškas operandas
+1000 0001 mod 000 r/m [poslinkis] bojb [bovb] – ADD registras/atmintis += betarpiškas operandas
+1000 0010 mod 000 r/m [poslinkis] bojb [bovb] – ADD registras/atmintis += betarpiškas operandas
+1000 0011 mod 000 r/m [poslinkis] bojb [bovb] – ADD registras/atmintis += betarpiškas operandas
+0100 0000 – INC registras (odinis)
+0100 0001 – INC registras (odinis)
+0100 0010 – INC registras (odinis)
+0100 0100 – INC registras (odinis)
+0100 0011 – INC registras (odinis)
+0100 0101 – INC registras (odinis)
+0100 0110 – INC registras (odinis)
+0100 0110 – INC registras (odinis)
+1111 1110 mod 000 r/m [poslinkis] – INC registras/atmintis
+1111 1111 mod 000 r/m [poslinkis] – INC registras/atmintis
+0010 1000 mod reg r/m [poslinkis] – SUB registras -= registras/atmintis
+0010 1010 mod reg r/m [poslinkis] – SUB registras -= registras/atmintis
+0010 1001 mod reg r/m [poslinkis] – SUB registras -= registras/atmintis
+0010 1011 mod reg r/m [poslinkis] – SUB registras -= registras/atmintis
+0010 1100 bojb [bovb] – SUB akumuliatorius -= betarpiškas operandas
+0010 1101 bojb [bovb] – SUB akumuliatorius -= betarpiškas operandas
+1000 0000 mod 101 r/m [poslinkis] bojb [bovb] – SUB registras/atmintis -= betarpiškas operandas
+1000 0001 mod 101 r/m [poslinkis] bojb [bovb] – SUB registras/atmintis -= betarpiškas operandas
+1000 0010 mod 101 r/m [poslinkis] bojb [bovb] – SUB registras/atmintis -= betarpiškas operandas
+1000 0011 mod 101 r/m [poslinkis] bojb [bovb] – SUB registras/atmintis -= betarpiškas operandas
+1111 1110 mod 001 r/m [poslinkis] – DEC registras/atmintis
+1111 1111 mod 001 r/m [poslinkis] – DEC registras/atmintis
+0100 1000 – DEC registras(odinis)
+0100 1001 – DEC registras(odinis)
+0100 1010 – DEC registras(odinis)
+0100 1100 – DEC registras(odinis)
+0100 1011 – DEC registras(odinis)
+0100 1101 – DEC registras(odinis)
+0100 1110 – DEC registras(odinis)
+0100 1111 – DEC registras(odinis)
+0011 1000 mod reg r/m [poslinkis] – CMP registras ~ registras/atmintis
+0011 1001 mod reg r/m [poslinkis] – CMP registras ~ registras/atmintis
+0011 1010 mod reg r/m [poslinkis] – CMP registras ~ registras/atmintis
+0011 1011 mod reg r/m [poslinkis] – CMP registras ~ registras/atmintis
+0011 1100 bojb [bovb] – CMP akumuliatorius ~ betarpiškas operandas
+0011 1101 bojb [bovb] – CMP akumuliatorius ~ betarpiškas operandas
+1000 0000 mod 111 r/m [poslinkis] bojb [bovb] – CMP registras/atmintis ~ betarpiškas operandas
+1000 0001 mod 111 r/m [poslinkis] bojb [bovb] – CMP registras/atmintis ~ betarpiškas operandas
+1000 0010 mod 111 r/m [poslinkis] bojb [bovb] – CMP registras/atmintis ~ betarpiškas operandas
+1000 0011 mod 111 r/m [poslinkis] bojb [bovb] – CMP registras/atmintis ~ betarpiškas operandas
+1111 0110 mod 100 r/m [poslinkis] – MUL registras/atmintis
+1111 0111 mod 100 r/m [poslinkis] – MUL registras/atmintis
+1111 0110 mod 110 r/m [poslinkis] – DIV registras/atmintis
+1111 0111 mod 110 r/m [poslinkis] – DIV registras/atmintis
+1001 1010 ajb avb srjb srvb – CALL yme (išorinis tiesioginis)
+1110 1000 pjb pvb – CALL yme (vidinis tiesioginis)
+1111 1111 mod 010 r/m [poslinkis] – CALL adresas (vidinis netiesioginis)
+1111 1111 mod 011 r/m [poslinkis] – CALL adresas (išorinis netiesioginis)
+1100 0010 bojb bovb – RET betarpiškas operandas; RETN betarpiškas operandas
+1100 0011 – RET; RETN
+1110 1001 pjb pvb – JMP yme (vidinis tiesioginis)
+1110 1010 ajb avb srjb srvb – JMP yme (išorinis tiesioginis)
+1110 1011 poslinkis – JMP yme (vidinis artimas)
+1111 1111 mod 100 r/m [poslinkis] – JMP adresas (vidinis netiesioginis)
+1111 1111 mod 101 r/m [poslinkis] – JMP ad
+1110 0010 poslinkis – LOOP yme
+1100 1101 numeris – INT numeris
+0111 0000 poslinkis – JO yme
+0111 0001 poslinkis – JNO yme
+0111 0010 poslinkis – JNAE yme; JB yme; JC yme
+0111 0011 poslinkis – JAE yme; JNB yme; JNC yme
+0111 0100 poslinkis – JE yme; JZ yme
+0111 0101 poslinkis – JNE yme; JNZ yme
+0111 0110 poslinkis – JBE yme; JNA yme
+0111 0111 poslinkis – JA yme; JNBE yme
+0111 1000 poslinkis – JS yme
+0111 1001 poslinkis – JNS yme
+0111 1010 poslinkis – JP yme; JPE yme
+0111 1011 poslinkis – JNP yme; JPO yme
+0111 1100 poslinkis – JL yme; JNGE yme
+0111 1101 poslinkis – JGE yme; JNL yme
+0111 1110 poslinkis – JLE yme; JNG yme
+0111 1111 poslinkis – JG yme; JNLE yme
+1110 0011 poslinkis – JCXZ yme
