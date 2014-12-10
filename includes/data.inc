@@ -33,3 +33,16 @@ create_fail db 'Failed to create output file', 10, 13, '$'
 input_buffer db 100h dup(0)
 input_buffer_size dw 100h
 characters_read dw 0
+
+;====================================
+; Main working variables
+;====================================
+opcode_buffer db 20 dup(0)
+opcode_buffer_size dw 20
+opcode_buffer_last_el dw 0
+
+res_print_buffer db 50 dup(0)
+res_print_buffer_size dw 50
+res_print_buffer_last_el dw 0
+
+instruction_pointer dw 0

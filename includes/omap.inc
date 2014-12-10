@@ -66,7 +66,40 @@ nmJle db 'nmJle'
 nmJg db 'jg $'
 nmJcxz db 'jcxz $'
 
-bit1_num dw 139
+nmAx db 'ax$'
+nmBx db 'bx$'
+nmCx db 'cx$'
+nmDx db 'dx$'
+nmSp db 'sp$'
+nmBp db 'bp$'
+nmSi db 'si$'
+nmDi db 'di$'
+nmAl db 'al$'
+nmBl db 'bl$'
+nmCl db 'cl$'
+nmDl db 'dl$'
+nmAh db 'ah$'
+nmBh db 'bh$'
+nmCh db 'ch$'
+nmDh db 'dh$'
+
+nmBxSi db 'bx + si$'
+nmBxDi db 'bx + di$'
+nmBpSi db 'bp + si$'
+nmBpDi db 'bp + di$'
+nmBxSiP db 'bx + si + $'
+nmBxDiP db 'bx + di + $'
+nmBpSiP db 'bp + si + $'
+nmBpDiP db 'bp + di + $'
+nmSiP db 'si + $'
+nmDiP db 'di + $'
+nmBpP db 'bp + $'
+nmBxP db 'bx + $'
+
+bit1_num dw 139 ; Number of bit 1 versions
+;================================================
+; 1st bit of every instruction
+;================================================
 bit1 db 088h, 089h, 08Ah, 08Bh, 08Eh, 08Ch, 0A0h
 	 db 0A1h, 0A2h, 0A3h, 0B0h, 0B1h, 0B2h, 0B4h
 	 db 0B3h, 0B5h, 0B6h, 0B7h, 0B8h, 0B9h, 0BAh
@@ -87,7 +120,9 @@ bit1 db 088h, 089h, 08Ah, 08Bh, 08Eh, 08Ch, 0A0h
 	 db 0E2h, 0CDh, 070h, 071h, 072h, 073h, 074h
 	 db 075h, 076h, 077h, 078h, 079h, 07Ah, 07Bh
 	 db 07Ch, 07Dh, 07Eh, 07Fh, 0E3h, 033h
-	 
+;================================================
+; Instruction completion tables
+;================================================
 ope1 db comNotFin, comNotFin, comNotFin, comNotFin
 	 db comNotFin, comNotFin, comRbyte, comRword
 	 db comRbyte, comRword, comBalbo, comBclbo
@@ -123,3 +158,43 @@ ope1 db comNotFin, comNotFin, comNotFin, comNotFin
 	 db comRbyte, comRbyte, comRbyte, comRbyte
 	 db comRbyte, comRbyte, comRbyte, comRbyte
 	 db comRbyte, comRbyte, comRbyte
+;================================================
+; Instruction name table
+;================================================	 
+opnm dw offset nmMov, offset nmMov, offset nmMov, offset nmMov
+	 dw offset nmMov, offset nmMov, offset nmMov, offset nmMov
+	 dw offset nmMov, offset nmMov, offset nmMov, offset nmMov
+	 dw offset nmMov, offset nmMov, offset nmMov, offset nmMov
+	 dw offset nmMov, offset nmMov, offset nmMov, offset nmMov
+	 dw offset nmMov, offset nmMov, offset nmMov, offset nmMov
+	 dw offset nmMov, offset nmMov, offset nmMov, offset nmMov
+	 dw offset nmPush, offset nmPush, offset nmPush, offset nmPush
+	 dw offset nmPush, offset nmPush, offset nmPush, offset nmPush
+	 dw offset nmPush, offset nmPush, offset nmPush, offset nmPush
+	 dw offset nmPush, offset nmPop, offset nmPop, offset nmPop
+	 dw offset nmPop, offset nmPop, offset nmPop, offset nmPop
+	 dw offset nmPop, offset nmPop, offset nmPop, offset nmPop
+	 dw offset nmPop, offset nmPop, offset nmAdd, offset nmAdd
+	 dw offset nmAdd, offset nmAdd, offset nmAdd, offset nmAdd
+	 dw offset nmAdd, offset nmAdd, offset nmAdd, offset nmAdd
+	 dw offset nmInc, offset nmInc, offset nmInc, offset nmInc
+	 dw offset nmInc, offset nmInc, offset nmInc, offset nmInc
+	 dw offset nmInc, offset nmInc, offset nmSub, offset nmSub
+	 dw offset nmSub, offset nmSub, offset nmSub, offset nmSub
+	 dw offset nmSub, offset nmSub, offset nmSub, offset nmSub
+	 dw offset nmDec, offset nmDec, offset nmDec, offset nmDec
+	 dw offset nmDec, offset nmDec, offset nmDec, offset nmDec
+	 dw offset nmDec, offset nmDec, offset nmCmp, offset nmCmp
+	 dw offset nmCmp, offset nmCmp, offset nmCmp, offset nmCmp
+	 dw offset nmCmp, offset nmCmp, offset nmCmp, offset nmCmp
+	 dw offset nmMul, offset nmMul, offset nmDiv, offset nmDiv
+	 dw offset nmCall, offset nmCall, offset nmCall, offset nmCall
+	 dw offset nmRet, offset nmRet, offset nmJmp, offset nmJmp
+	 dw offset nmJmp, offset nmJmp, offset nmJmp, offset nmLoop
+	 dw offset nmInt, offset nmJo, offset nmJno, offset nmJnae
+	 dw offset nmJae, offset nmJe, offset nmJne, offset nmJbe
+	 dw offset nmJa, offset nmJs, offset nmJns, offset nmJp
+	 dw offset nmJnp, offset nmJl, offset nmJge, offset nmJle
+	 dw offset nmJg, offset nmJcxz
+	 
+	 
