@@ -28,6 +28,13 @@ read_fail db 'Failure to read file contents', 10, 13, '$'
 create_fail db 'Failed to create output file', 10, 13, '$'
 
 ;====================================
+; Utility strings
+;====================================
+endl db 10, 13, '$'
+undef_op db 'Undefined', 10, 13, '$'
+def_op db 'Defined', 10, 13, '$'
+
+;====================================
 ; Read buffer
 ;====================================
 input_buffer db 100h dup(0)

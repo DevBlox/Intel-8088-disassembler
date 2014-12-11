@@ -54,11 +54,14 @@ start:
 	fopen filename, handle
 	fcreate result_file, result_handle
 	
-@@repeat:
 	fread handle, input_buffer, input_buffer_size, characters_read
-	printbuf input_buffer, characters_read
-	mov ax, input_buffer_size
-	cmp ax, characters_read
+	
+@@repeat:
+	lea si, input_buffer
+	mov bx, 0
+	mov al, si[bx]
+	call parser
+	cmp bx, characters_read
 	je @@repeat
 	
 	exit 0

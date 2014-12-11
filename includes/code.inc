@@ -58,3 +58,35 @@ check_help proc
 @@not_match:
 	ret
 check_help endp
+;====================================
+; Parses commands, the main procedure
+;====================================
+parser proc
+	push si
+	push bx
+
+	lea si, bit1
+	mov cx, bit1_num
+	mov bx, 0
+	
+@@repeat_loop:
+	cmp al, si[bx]
+	je @@matches
+	inc bx
+	loop @@repeat_loop
+	jmp @@no_match
+	
+@@matches:
+	print def_op
+	print opnm[bx]
+	print endl
+	jmp @@exit
+	
+@@no_match:
+	print undef_op
+	
+@@exit:
+	pop bx
+	pop si
+	ret
+parser endp

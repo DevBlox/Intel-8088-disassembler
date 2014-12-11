@@ -195,6 +195,6 @@ opnm dw offset nmMov, offset nmMov, offset nmMov, offset nmMov
 	 dw offset nmJae, offset nmJe, offset nmJne, offset nmJbe
 	 dw offset nmJa, offset nmJs, offset nmJns, offset nmJp
 	 dw offset nmJnp, offset nmJl, offset nmJge, offset nmJle
-	 dw offset nmJg, offset nmJcxz
+	 dw offset nmJg, offset nmJcxz, 0 ; Missing table entry?
 	 
 	 
