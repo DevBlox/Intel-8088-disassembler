@@ -6,7 +6,6 @@ result_file db 20 dup(0)
 fbufsize dw 20
 handle dw 0
 result_handle dw 0
-
 parameter_offset dw 0 ; Sets the offset for the parameters, to continue from where left off
 
 ;====================================
@@ -30,9 +29,10 @@ create_fail db 'Failed to create output file', 10, 13, '$'
 ;====================================
 ; Utility strings
 ;====================================
-endl db 10, 13, '$'
-undef_op db 'Undefined', 10, 13, '$'
-def_op db 'Defined', 10, 13, '$'
+endl db ' ', 10, 13, '$'
+undef_op db 'Undefined $'
+def_op db 'Defined $'
+hxd db '0123456789ABCDEF'
 
 ;====================================
 ; Read buffer
@@ -44,12 +44,14 @@ characters_read dw 0
 ;====================================
 ; Main working variables
 ;====================================
-opcode_buffer db 20 dup(0)
-opcode_buffer_size dw 20
-opcode_buffer_last_el dw 0
+; Operation buffer
+opbuffer db 20 dup(0)
+opbuffer_size dw 20
+opbuffer_length dw 0
 
-res_print_buffer db 50 dup(0)
-res_print_buffer_size dw 50
-res_print_buffer_last_el dw 0
+; Result buffer
+rbuffer db 50 dup(0)
+rbuffer_size dw 50
+rbuffer_length dw 0
 
-instruction_pointer dw 0
+ip_count dw 0

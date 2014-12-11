@@ -94,3 +94,23 @@ param_parse macro buffer
 	lea di, buffer
 	call parse_param
 endm
+;====================================
+; Parses a byte of hexadecimal value
+; Resulting characters in al, ah
+;====================================
+hxdb macro value
+	mov al, value
+	xor ah, ah
+	mov dh, 16
+	div dh
+	
+	mov bl, al
+	xor bh, bh
+	mov al, hxd[bx]
+
+	mov bl, ah
+	xor bh, bh
+	mov ah, hxd[bx]
+	
+	xchg ah, al ; Switch to retain order
+endm

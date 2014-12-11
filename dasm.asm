@@ -43,7 +43,9 @@ code_seg segment para public 'code'
 	locals @@
 	include includes/util.inc
 	include includes/code.inc
-	
+;====================================
+; Start of execution here
+;====================================	
 start:
 	mov ax, seg data_seg
 	mov ds, ax
@@ -55,14 +57,23 @@ start:
 	fcreate result_file, result_handle
 	
 	fread handle, input_buffer, input_buffer_size, characters_read
+	lea si, input_buffer
+	lea di, rbuffer
+	mov bx, 0
+	mov ip_count, 100h
 	
 @@repeat:
-	lea si, input_buffer
-	mov bx, 0
+	call nullify
+	push ax bx cx dx
+	call put_ip_counter
+	printbuf rbuffer, 5
+	pop dx cx bx ax
+	
 	mov al, si[bx]
 	call parser
+	inc bx
 	cmp bx, characters_read
-	je @@repeat
+	jnge @@repeat
 	
 	exit 0
 	
