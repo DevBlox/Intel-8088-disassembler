@@ -62,6 +62,7 @@ check_help endp
 ; Parses commands, the main procedure
 ;====================================
 parser proc
+	push di
 	push si
 	push bx
 
@@ -94,29 +95,34 @@ parser proc
 @@exit:
 	pop bx
 	pop si
+	pop di
 	ret
 parser endp
 ;====================================
 ; Puts the ip counter into the result buffer
 ;====================================
 put_ip_counter proc
+	mov bx, rbuffer_length
 	mov dx, ip_count
 	
 	hxdb dh
-	mov byte ptr rbuffer_length[di], ah
-	inc rbuffer_length
-	mov byte ptr rbuffer_length[di], al
-	inc rbuffer_length
+	mov byte ptr di[bx], ah
+	inc bx
+	mov byte ptr di[bx], al
+	inc bx
 	
 	hxdb dl
-	mov byte ptr rbuffer_length[di], ah
+	mov byte ptr di[bx], ah
 	inc rbuffer_length
-	mov byte ptr rbuffer_length[di], al
-	inc rbuffer_length
+	mov byte ptr di[bx], al
+	inc bx
+	
+	mov rbuffer_length, bx
+	
 	ret
 put_ip_counter endp
 ;====================================
-; Resets important variables to null
+; Resets counter variables to null
 ;====================================
 nullify proc
 	mov opbuffer_length, 0

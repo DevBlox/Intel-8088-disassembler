@@ -63,10 +63,13 @@ start:
 	mov ip_count, 100h
 	
 @@repeat:
+
 	call nullify
 	push ax bx cx dx
 	call put_ip_counter
-	printbuf rbuffer, 5
+	mov bx, rbuffer_length
+	mov byte ptr di[bx], '$'
+	fwrite result_handle, rbuffer, rbuffer_length
 	pop dx cx bx ax
 	
 	mov al, si[bx]

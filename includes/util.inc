@@ -88,6 +88,16 @@ printbuf macro buffer, count
 	int 21h
 endm
 ;====================================
+; Writes to file from buffer
+;====================================
+fwrite macro handle, buffer, sz
+	mov ah, 40h
+	mov bx, handle
+	mov cx, sz
+	lea dx, buffer
+	int 21h
+endm
+;====================================
 ; A utility for parameter parsing
 ;====================================
 param_parse macro buffer
@@ -99,6 +109,8 @@ endm
 ; Resulting characters in al, ah
 ;====================================
 hxdb macro value
+	push bx
+	
 	mov al, value
 	xor ah, ah
 	mov dh, 16
@@ -113,4 +125,6 @@ hxdb macro value
 	mov ah, hxd[bx]
 	
 	xchg ah, al ; Switch to retain order
+	
+	pop bx
 endm
