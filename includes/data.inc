@@ -46,6 +46,11 @@ characters_read dw 0
 ;====================================
 ; Main working variables
 ;====================================
+; Resulting disassembled instructions buffer
+dopbuffer db 50 dup (0)
+dopbuffer_size dw 50
+dopbuffer_length dw 0
+
 ; Operation buffer
 opbuffer db 20 dup(0)
 opbuffer_size dw 20

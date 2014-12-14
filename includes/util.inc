@@ -179,61 +179,17 @@ endm
 ; Sets register and operand (byte)
 ;====================================
 byteRegBo macro nm
-	swrite rbuffer, rbuffer_length, nm
-	swrite rbuffer, rbuffer_length, separator
-	
-	push ax bx
-	
-	mov bx, input_buffer_curr
-	inc bx
-	mov al, input_buffer[bx]
-	mov input_buffer_curr, bx
-	
-	mov bx, opbuffer_length
-	mov opbuffer[bx], al
-	inc bx
-	mov opbuffer_length, bx
-	
-	hxdb al
-	put rbuffer, rbuffer_length, ah
-	put rbuffer, rbuffer_length, al
-	
-	put rbuffer, rbuffer_length, 'h'
-	
-	pop bx ax
+	push bx
+	lea bx, nm
+	call __byteRegBo
+	pop bx
 endm
 ;====================================
 ; Sets register and operand (word)
 ;====================================
 wordRegBo macro nm
-	swrite rbuffer, rbuffer_length, nm
-	swrite rbuffer, rbuffer_length, separator
-
-	push ax bx
-	
-	mov bx, input_buffer_curr
-	inc bx
-	mov ah, input_buffer[bx]
-	inc bx
-	mov al, input_buffer[bx]
-	mov input_buffer_curr, bx
-	
-	mov bx, opbuffer_length
-	mov opbuffer[bx], ah
-	inc bx
-	mov opbuffer[bx], al
-	inc bx
-	mov opbuffer_length, bx
-	
-	mov bx, ax
-	hxdb bl
-	put rbuffer, rbuffer_length, ah
-	put rbuffer, rbuffer_length, al
-	hxdb bh
-	put rbuffer, rbuffer_length, ah
-	put rbuffer, rbuffer_length, al
-	
-	put rbuffer, rbuffer_length, 'h'
-	
-	pop bx ax
+	push bx
+	lea bx, nm
+	call __wordRegBo
+	pop bx
 endm

@@ -62,15 +62,6 @@ check_help endp
 ; Parses commands, the main procedure
 ;====================================
 parser proc
-	push ax
-	hxdb al
-	put opbuffer, opbuffer_length, ah
-	put opbuffer, opbuffer_length, al
-	put opbuffer, opbuffer_length, '$'
-	swrite rbuffer, rbuffer_length, opbuffer
-	put rbuffer, rbuffer_length, ' '
-	pop ax
-	
 	push ax bx cx dx di si
 
 	lea si, bit1
@@ -86,6 +77,16 @@ parser proc
 	jmp @@no_match
 	
 @@matches:
+	inc ip_count
+	push bx
+	mov bx, opbuffer_length
+	hxdb al
+	mov opbuffer[bx], ah
+	inc bx
+	mov opbuffer[bx], al
+	inc bx
+	mov opbuffer_length, bx
+	pop bx
 	mov ax, bx
 	mov cx, 2
 	mul cx
@@ -93,15 +94,35 @@ parser proc
 	lea di, opnm[bx]
 	xchg bx, ax
 	mov di, [di]
-	swrite rbuffer, rbuffer_length, [di]
+	swrite dopbuffer, dopbuffer_length, [di]
 	call stage2
 	jmp @@exit
 	
 @@no_match:
-	swrite rbuffer, rbuffer_length, undef_op
+	inc ip_count
+	push bx
+	mov bx, opbuffer_length
+	hxdb al
+	mov opbuffer[bx], ah
+	inc bx
+	mov opbuffer[bx], al
+	inc bx
+	mov opbuffer_length, bx
+	pop bx
+	swrite dopbuffer, dopbuffer_length, undef_op
 	
 @@exit:
+	push ax
+	put opbuffer, opbuffer_length, '$'
+	swrite rbuffer, rbuffer_length, opbuffer
+	put rbuffer, rbuffer_length, ' '
+	pop ax
+	
+	mov bx, dopbuffer_length
+	mov dopbuffer[bx], '$'
+	swrite rbuffer, rbuffer_length, dopbuffer
 	swrite rbuffer, rbuffer_length, endl
+	
 	pop si di dx cx bx ax
 	ret
 parser endp
@@ -139,6 +160,7 @@ put_ip_counter endp
 nullify proc
 	mov opbuffer_length, 0
 	mov rbuffer_length, 0
+	mov dopbuffer_length, 0
 	ret
 nullify endp
 ;====================================
@@ -157,6 +179,87 @@ __swrite proc
 @@exit:
 	ret
 __swrite endp
+;====================================
+; Implementation of the macro
+;====================================
+__byteRegBo proc
+	swrite dopbuffer, dopbuffer_length, [bx]
+	swrite dopbuffer, dopbuffer_length, separator
+	
+	push ax bx
+	
+	mov bx, input_buffer_curr
+	inc bx
+	mov al, input_buffer[bx]
+	mov input_buffer_curr, bx
+	
+	push ax
+	mov bx, opbuffer_length
+	hxdb al
+	mov opbuffer[bx], ah
+	inc bx
+	mov opbuffer[bx], al
+	inc bx
+	mov opbuffer_length, bx
+	pop ax
+	
+	hxdb al
+	put dopbuffer, dopbuffer_length, ah
+	put dopbuffer, dopbuffer_length, al
+	
+	put dopbuffer, dopbuffer_length, 'h'
+	
+	pop bx ax
+	inc ip_count
+	ret
+__byteRegBo endp
+;====================================
+; Implementation of the macro
+;====================================
+__wordRegBo proc
+	swrite dopbuffer, dopbuffer_length, [bx]
+	swrite dopbuffer, dopbuffer_length, separator
+
+	push ax bx
+	
+	mov bx, input_buffer_curr
+	inc bx
+	mov ah, input_buffer[bx]
+	inc bx
+	mov al, input_buffer[bx]
+	mov input_buffer_curr, bx
+	
+	mov bx, opbuffer_length
+	
+	push ax
+	hxdb al
+	mov opbuffer[bx], ah
+	inc bx
+	mov opbuffer[bx], al
+	inc bx
+	pop ax
+	mov al, ah
+	hxdb al
+	mov opbuffer[bx], ah
+	inc bx
+	mov opbuffer[bx], al
+	inc bx
+	mov opbuffer_length, bx
+	
+	mov bx, ax
+	hxdb bl
+	put dopbuffer, dopbuffer_length, ah
+	put dopbuffer, dopbuffer_length, al
+	hxdb bh
+	put dopbuffer, dopbuffer_length, ah
+	put dopbuffer, dopbuffer_length, al
+	
+	put dopbuffer, dopbuffer_length, 'h'
+	
+	pop bx ax
+	add ip_count, 2
+	ret
+__wordRegBo endp
 ;====================================
 ; Stage 2, determining the completion
 ;====================================
@@ -218,18 +321,21 @@ __comRbyte proc
 	mov al, input_buffer[bx]
 	mov input_buffer_curr, bx
 	
-	mov bx, opbuffer_length
-	mov opbuffer[bx], al
+	mov bx, dopbuffer_length
+	hxdb al
+	mov dopbuffer[bx], ah
 	inc bx
-	mov opbuffer_length, bx
+	mov dopbuffer[bx], al
+	inc bx
+	mov dopbuffer_length, bx
+	put dopbuffer, dopbuffer_length, 'h'
 	
 	hxdb al
 	put rbuffer, rbuffer_length, ah
 	put rbuffer, rbuffer_length, al
 	
-	put rbuffer, rbuffer_length, 'h'
-	
 	pop bx ax
+	inc ip_count
 	ret
 __comRbyte endp
 ;-------------------------------------
@@ -243,24 +349,33 @@ __comRword proc
 	mov al, input_buffer[bx]
 	mov input_buffer_curr, bx
 	
-	mov bx, opbuffer_length
-	mov opbuffer[bx], ah
+	mov bx, dopbuffer_length
+	push ax
+	hxdb al
+	mov dopbuffer[bx], ah
 	inc bx
-	mov opbuffer[bx], al
+	mov dopbuffer[bx], al
 	inc bx
-	mov opbuffer_length, bx
+	pop ax
+	mov al, ah
+	hxdb al
+	mov dopbuffer[bx], ah
+	inc bx
+	mov dopbuffer[bx], al
+	inc bx
+	mov dopbuffer_length, bx
+	put dopbuffer, dopbuffer_length, 'h'
 	
 	mov bx, ax
 	hxdb bl
-	put rbuffer, rbuffer_length, ah
-	put rbuffer, rbuffer_length, al
+	put dopbuffer, dopbuffer_length, ah
+	put dopbuffer, dopbuffer_length, al
 	hxdb bh
-	put rbuffer, rbuffer_length, ah
-	put rbuffer, rbuffer_length, al
-	
-	put rbuffer, rbuffer_length, 'h'
+	put dopbuffer, dopbuffer_length, ah
+	put dopbuffer, dopbuffer_length, al
 	
 	pop bx ax
+	add ip_count, 2
 	ret
 __comRword endp
 ;-------------------------------------
@@ -269,7 +384,7 @@ __comRnull proc
 __comRnull endp
 ;-------------------------------------
 __comNotFin proc
-	swrite rbuffer, rbuffer_length, undef_op
+	swrite dopbuffer, dopbuffer_length, undef_op
 	ret
 __comNotFin endp
 ;-------------------------------------
@@ -412,6 +527,15 @@ __comR2word proc
 	mov input_buffer_curr, bx
 	
 	mov bx, opbuffer_length
+	push ax
+	hxdb al
+	mov opbuffer[bx], ah
+	inc bx
+	mov opbuffer[bx], al
+	inc bx
+	pop ax
+	mov al, ah
+	hxdb al
 	mov opbuffer[bx], ah
 	inc bx
 	mov opbuffer[bx], al
@@ -420,13 +544,13 @@ __comR2word proc
 	
 	mov bx, ax
 	hxdb bl
-	put rbuffer, rbuffer_length, ah
-	put rbuffer, rbuffer_length, al
+	put dopbuffer, dopbuffer_length, ah
+	put dopbuffer, dopbuffer_length, al
 	hxdb bh
-	put rbuffer, rbuffer_length, ah
-	put rbuffer, rbuffer_length, al
+	put dopbuffer, dopbuffer_length, ah
+	put dopbuffer, dopbuffer_length, al
 	
-	swrite rbuffer, rbuffer_length, separator
+	swrite dopbuffer, dopbuffer_length, separator
 	
 	mov bx, input_buffer_curr
 	inc bx
@@ -436,6 +560,15 @@ __comR2word proc
 	mov input_buffer_curr, bx
 	
 	mov bx, opbuffer_length
+	push ax
+	hxdb al
+	mov opbuffer[bx], ah
+	inc bx
+	mov opbuffer[bx], al
+	inc bx
+	pop ax
+	mov al, ah
+	hxdb al
 	mov opbuffer[bx], ah
 	inc bx
 	mov opbuffer[bx], al
@@ -444,13 +577,14 @@ __comR2word proc
 	
 	mov bx, ax
 	hxdb bl
-	put rbuffer, rbuffer_length, ah
-	put rbuffer, rbuffer_length, al
+	put dopbuffer, dopbuffer_length, ah
+	put dopbuffer, dopbuffer_length, al
 	hxdb bh
-	put rbuffer, rbuffer_length, ah
-	put rbuffer, rbuffer_length, al
+	put dopbuffer, dopbuffer_length, ah
+	put dopbuffer, dopbuffer_length, al
 	
 	pop bx ax
+	add ip_count, 4
 	ret
 __comR2word endp
 ;-------------------------------------
