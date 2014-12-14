@@ -56,27 +56,29 @@ start:
 	fopen filename, handle
 	fcreate result_file, result_handle
 	
-	fread handle, input_buffer, input_buffer_size, characters_read
 	lea si, input_buffer
 	lea di, rbuffer
 	mov bx, 0
 	mov ip_count, 100h
 	
+@@load_buffer:
+	fread handle, input_buffer, input_buffer_size, characters_read
+	
 @@repeat:
 
 	call nullify
-	push ax bx cx dx
 	call put_ip_counter
-	mov bx, rbuffer_length
-	mov byte ptr di[bx], '$'
-	fwrite result_handle, rbuffer, rbuffer_length
-	pop dx cx bx ax
 	
 	mov al, si[bx]
 	call parser
+	fwrite result_handle, rbuffer, rbuffer_length
 	inc bx
+	inc ip_count
 	cmp bx, characters_read
-	jnge @@repeat
+	jng @@repeat
+	mov dx, input_buffer_size
+	cmp dx, characters_read
+	je @@load_buffer
 	
 	exit 0
 	

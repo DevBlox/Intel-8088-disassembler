@@ -62,9 +62,16 @@ check_help endp
 ; Parses commands, the main procedure
 ;====================================
 parser proc
-	push di
-	push si
-	push bx
+	push ax
+	hxdb al
+	put opbuffer, opbuffer_length, ah
+	put opbuffer, opbuffer_length, al
+	put opbuffer, opbuffer_length, '$'
+	swrite rbuffer, rbuffer_length, opbuffer
+	put rbuffer, rbuffer_length, ' '
+	pop ax
+	
+	push ax bx cx dx di si
 
 	lea si, bit1
 	mov cx, bit1_num
@@ -84,24 +91,24 @@ parser proc
 	mov bx, ax
 	lea di, opnm[bx]
 	mov di, [di]
-	print [di]
-	print endl
+	swrite rbuffer, rbuffer_length, [di]
+	swrite rbuffer, rbuffer_length, endl
 	jmp @@exit
 	
 @@no_match:
-	print undef_op
-	print endl
+	swrite rbuffer, rbuffer_length, undef_op
+	swrite rbuffer, rbuffer_length, endl
 	
 @@exit:
-	pop bx
-	pop si
-	pop di
+	pop si di dx cx bx ax
 	ret
 parser endp
 ;====================================
 ; Puts the ip counter into the result buffer
 ;====================================
 put_ip_counter proc
+	push ax bx cx dx
+
 	mov bx, rbuffer_length
 	mov dx, ip_count
 	
@@ -113,12 +120,15 @@ put_ip_counter proc
 	
 	hxdb dl
 	mov byte ptr di[bx], ah
-	inc rbuffer_length
+	inc bx
 	mov byte ptr di[bx], al
 	inc bx
 	
 	mov rbuffer_length, bx
 	
+	put rbuffer, rbuffer_length, ':'
+	put rbuffer, rbuffer_length, ' '
+	pop dx cx bx ax
 	ret
 put_ip_counter endp
 ;====================================
@@ -129,3 +139,19 @@ nullify proc
 	mov rbuffer_length, 0
 	ret
 nullify endp
+;====================================
+; Implementation of the swrite
+;====================================
+__swrite proc
+@@loop:
+	mov al, [si]
+	cmp al, '$'
+	je @@exit
+	mov [di + bx], al
+	inc bx
+	inc si
+	jmp @@loop
+
+@@exit:
+	ret
+__swrite endp

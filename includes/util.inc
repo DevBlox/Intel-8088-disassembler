@@ -91,11 +91,13 @@ endm
 ; Writes to file from buffer
 ;====================================
 fwrite macro handle, buffer, sz
+	push ax bx cx dx si di
 	mov ah, 40h
 	mov bx, handle
 	mov cx, sz
 	lea dx, buffer
 	int 21h
+	pop di si dx cx bx ax
 endm
 ;====================================
 ; A utility for parameter parsing
@@ -127,4 +129,29 @@ hxdb macro value
 	xchg ah, al ; Switch to retain order
 	
 	pop bx
+endm
+;====================================
+; Copies a $ terminated string
+; (emmiting $) to buffer
+;====================================
+swrite macro buffer, pos, string
+	push di si ax bx cx dx
+	lea si, string
+	lea di, buffer
+	mov bx, pos
+	call __swrite
+	mov pos, bx ; New last element position
+	pop dx cx bx ax si di
+endm
+;====================================
+; Puts a character on to buffer
+;====================================
+put macro buffer, pos, char
+	push di si ax bx cx dx
+	lea di, buffer
+	mov bx, pos
+	mov byte ptr [di + bx], char
+	inc bx
+	mov pos, bx
+	pop dx cx bx ax si di
 endm

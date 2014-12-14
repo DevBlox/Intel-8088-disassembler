@@ -29,7 +29,7 @@ create_fail db 'Failed to create output file', 10, 13, '$'
 ;====================================
 ; Utility strings
 ;====================================
-endl db ' ', 10, 13, '$'
+endl db 10, 13, '$'
 undef_op db 'Undefined $'
 def_op db 'Defined $'
 hxd db '0123456789ABCDEF'
