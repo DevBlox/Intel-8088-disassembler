@@ -33,12 +33,14 @@ endl db 10, 13, '$'
 undef_op db 'Undefined $'
 def_op db 'Defined $'
 hxd db '0123456789ABCDEF'
+separator db ', $'
 
 ;====================================
 ; Read buffer
 ;====================================
 input_buffer db 100h dup(0)
 input_buffer_size dw 100h
+input_buffer_curr dw 0
 characters_read dw 0
 
 ;====================================
@@ -55,3 +57,4 @@ rbuffer_size dw 50
 rbuffer_length dw 0
 
 ip_count dw 0
+curr_instruction db 0

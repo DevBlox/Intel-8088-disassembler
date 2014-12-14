@@ -42,6 +42,7 @@ endm
 fread macro handle, buffer, buffersize, count
 	local @@error
 	local @@continue
+	push ax bx cx dx si di
 	mov ah, 3Fh
 	mov bx, handle
 	mov cx, buffersize
@@ -56,6 +57,7 @@ fread macro handle, buffer, buffersize, count
 	
 @@continue:
 	mov count, ax
+	pop di si dx cx bx ax
 endm
 ;====================================
 ; Creates a file
@@ -154,4 +156,84 @@ put macro buffer, pos, char
 	inc bx
 	mov pos, bx
 	pop dx cx bx ax si di
+endm
+;====================================
+; Compares to value and calls a function if true
+;====================================
+cmpcall macro register, value, function
+	local @@matches
+	local @@exit
+	push dx
+	mov dl, register
+	cmp dl, value
+	je @@matches
+	jmp @@exit
+	
+@@matches:
+	call function
+	
+@@exit:
+	pop dx
+endm
+;====================================
+; Sets register and operand (byte)
+;====================================
+byteRegBo macro nm
+	swrite rbuffer, rbuffer_length, nm
+	swrite rbuffer, rbuffer_length, separator
+	
+	push ax bx
+	
+	mov bx, input_buffer_curr
+	inc bx
+	mov al, input_buffer[bx]
+	mov input_buffer_curr, bx
+	
+	mov bx, opbuffer_length
+	mov opbuffer[bx], al
+	inc bx
+	mov opbuffer_length, bx
+	
+	hxdb al
+	put rbuffer, rbuffer_length, ah
+	put rbuffer, rbuffer_length, al
+	
+	put rbuffer, rbuffer_length, 'h'
+	
+	pop bx ax
+endm
+;====================================
+; Sets register and operand (word)
+;====================================
+wordRegBo macro nm
+	swrite rbuffer, rbuffer_length, nm
+	swrite rbuffer, rbuffer_length, separator
+
+	push ax bx
+	
+	mov bx, input_buffer_curr
+	inc bx
+	mov ah, input_buffer[bx]
+	inc bx
+	mov al, input_buffer[bx]
+	mov input_buffer_curr, bx
+	
+	mov bx, opbuffer_length
+	mov opbuffer[bx], ah
+	inc bx
+	mov opbuffer[bx], al
+	inc bx
+	mov opbuffer_length, bx
+	
+	mov bx, ax
+	hxdb bl
+	put rbuffer, rbuffer_length, ah
+	put rbuffer, rbuffer_length, al
+	hxdb bh
+	put rbuffer, rbuffer_length, ah
+	put rbuffer, rbuffer_length, al
+	
+	put rbuffer, rbuffer_length, 'h'
+	
+	pop bx ax
 endm

@@ -70,10 +70,11 @@ start:
 	call put_ip_counter
 	
 	mov al, si[bx]
+	mov input_buffer_curr, bx
 	call parser
+	mov bx, input_buffer_curr
 	fwrite result_handle, rbuffer, rbuffer_length
 	inc bx
-	inc ip_count
 	cmp bx, characters_read
 	jng @@repeat
 	mov dx, input_buffer_size

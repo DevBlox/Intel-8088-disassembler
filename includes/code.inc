@@ -76,6 +76,7 @@ parser proc
 	lea si, bit1
 	mov cx, bit1_num
 	mov bx, 0
+	mov curr_instruction, al
 	
 @@repeat_loop:
 	cmp al, si[bx]
@@ -88,18 +89,19 @@ parser proc
 	mov ax, bx
 	mov cx, 2
 	mul cx
-	mov bx, ax
+	xchg bx, ax
 	lea di, opnm[bx]
+	xchg bx, ax
 	mov di, [di]
 	swrite rbuffer, rbuffer_length, [di]
-	swrite rbuffer, rbuffer_length, endl
+	call stage2
 	jmp @@exit
 	
 @@no_match:
 	swrite rbuffer, rbuffer_length, undef_op
-	swrite rbuffer, rbuffer_length, endl
 	
 @@exit:
+	swrite rbuffer, rbuffer_length, endl
 	pop si di dx cx bx ax
 	ret
 parser endp
@@ -155,3 +157,300 @@ __swrite proc
 @@exit:
 	ret
 __swrite endp
+;====================================
+; Stage 2, determining the completion
+;====================================
+stage2 proc
+	push ax bx cx dx si di
+	
+	mov al, ope1[bx]
+	
+	cmpcall al, comFin, __comFin
+	cmpcall al, comRbyte, __comRbyte
+	cmpcall al, comRword, __comRword
+	cmpcall al, comRnull, __comRnull
+	cmpcall al, comNotFin, __comNotFin
+	cmpcall al, comBalbo, __comBalbo
+	cmpcall al, comBclbo, __comBclbo
+	cmpcall al, comBdlbo, __comBdlbo
+	cmpcall al, comBblbo, __comBblbo
+	cmpcall al, comBahbo, __comBahbo
+	cmpcall al, comBbhbo, __comBbhbo
+	cmpcall al, comBchbo, __comBchbo
+	cmpcall al, comBdhbo, __comBdhbo
+	cmpcall al, comWaxbo, __comWaxbo
+	cmpcall al, comWcxbo, __comWcxbo
+	cmpcall al, comWdxbo, __comWdxbo
+	cmpcall al, comWbxbo, __comWbxbo
+	cmpcall al, comWspbo, __comWspbo
+	cmpcall al, comWbpbo, __comWbpbo
+	cmpcall al, comWsibo, __comWsibo
+	cmpcall al, comWdibo, __comWdibo
+	cmpcall al, comes, __comes
+	cmpcall al, comcs, __comcs
+	cmpcall al, comss, __comss
+	cmpcall al, comds, __comds
+	cmpcall al, comax, __comax
+	cmpcall al, comcx, __comcx
+	cmpcall al, comdx, __comdx
+	cmpcall al, combx, __combx
+	cmpcall al, comsp, __comsp
+	cmpcall al, combp, __combp
+	cmpcall al, comsi, __comsi
+	cmpcall al, comdi, __comdi
+	cmpcall al, comR2word, __comR2word
+	
+	pop di si dx cx bx ax
+	ret
+stage2 endp
+;#####################################
+; The stage 2 logic
+;#####################################
+__comFin proc
+	ret
+__comFin endp
+;-------------------------------------
+__comRbyte proc
+	push ax bx
+	
+	mov bx, input_buffer_curr
+	inc bx
+	mov al, input_buffer[bx]
+	mov input_buffer_curr, bx
+	
+	mov bx, opbuffer_length
+	mov opbuffer[bx], al
+	inc bx
+	mov opbuffer_length, bx
+	
+	hxdb al
+	put rbuffer, rbuffer_length, ah
+	put rbuffer, rbuffer_length, al
+	
+	put rbuffer, rbuffer_length, 'h'
+	
+	pop bx ax
+	ret
+__comRbyte endp
+;-------------------------------------
+__comRword proc
+	push ax bx
+	
+	mov bx, input_buffer_curr
+	inc bx
+	mov ah, input_buffer[bx]
+	inc bx
+	mov al, input_buffer[bx]
+	mov input_buffer_curr, bx
+	
+	mov bx, opbuffer_length
+	mov opbuffer[bx], ah
+	inc bx
+	mov opbuffer[bx], al
+	inc bx
+	mov opbuffer_length, bx
+	
+	mov bx, ax
+	hxdb bl
+	put rbuffer, rbuffer_length, ah
+	put rbuffer, rbuffer_length, al
+	hxdb bh
+	put rbuffer, rbuffer_length, ah
+	put rbuffer, rbuffer_length, al
+	
+	put rbuffer, rbuffer_length, 'h'
+	
+	pop bx ax
+	ret
+__comRword endp
+;-------------------------------------
+__comRnull proc
+	ret
+__comRnull endp
+;-------------------------------------
+__comNotFin proc
+	swrite rbuffer, rbuffer_length, undef_op
+	ret
+__comNotFin endp
+;-------------------------------------
+__comBalbo proc
+	byteRegBo nmAl
+	ret
+__comBalbo endp
+;-------------------------------------
+__comBclbo proc
+	byteRegBo nmCl
+	ret
+__comBclbo endp
+;-------------------------------------
+__comBdlbo proc
+	byteRegBo nmDl
+	ret
+__comBdlbo endp
+;-------------------------------------
+__comBblbo proc
+	byteRegBo nmBl
+	ret
+__comBblbo endp
+;-------------------------------------
+__comBahbo proc
+	byteRegBo nmAh
+	ret
+__comBahbo endp
+;-------------------------------------
+__comBbhbo proc
+	byteRegBo nmBh
+	ret
+__comBbhbo endp
+;-------------------------------------
+__comBchbo proc
+	byteRegBo nmCh
+	ret
+__comBchbo endp
+;-------------------------------------
+__comBdhbo proc
+	byteRegBo nmDh
+	ret
+__comBdhbo endp
+;-------------------------------------
+__comWaxbo proc
+	wordRegBo nmAx
+	ret
+__comWaxbo endp
+;-------------------------------------
+__comWcxbo proc
+	wordRegBo nmCx
+	ret
+__comWcxbo endp
+;-------------------------------------
+__comWdxbo proc
+	wordRegBo nmDx
+	ret
+__comWdxbo endp
+;-------------------------------------
+__comWbxbo proc
+	wordRegBo nmBx
+	ret
+__comWbxbo endp
+;-------------------------------------
+__comWspbo proc
+	wordRegBo nmSp
+	ret
+__comWspbo endp
+;-------------------------------------
+__comWbpbo proc
+	wordRegBo nmBp
+	ret
+__comWbpbo endp
+;-------------------------------------
+__comWsibo proc
+	wordRegBo nmSi
+	ret
+__comWsibo endp
+;-------------------------------------
+__comWdibo proc
+	wordRegBo nmDi
+	ret
+__comWdibo endp
+;-------------------------------------
+__comes proc
+	ret
+__comes endp
+;-------------------------------------
+__comcs proc
+	ret
+__comcs endp
+;-------------------------------------
+__comss proc
+	ret
+__comss endp
+;-------------------------------------
+__comds proc
+	ret
+__comds endp
+;-------------------------------------
+__comax proc
+	ret
+__comax endp
+;-------------------------------------
+__comcx proc
+	ret
+__comcx endp
+;-------------------------------------
+__comdx proc
+	ret
+__comdx endp
+;-------------------------------------
+__combx proc
+	ret
+__combx endp
+;-------------------------------------
+__comsp proc
+	ret
+__comsp endp
+;-------------------------------------
+__combp proc
+	ret
+__combp endp
+;-------------------------------------
+__comsi proc
+	ret
+__comsi endp
+;-------------------------------------
+__comdi proc
+	ret
+__comdi endp
+;-------------------------------------
+__comR2word proc
+	push ax bx
+	
+	mov bx, input_buffer_curr
+	inc bx
+	mov ah, input_buffer[bx]
+	inc bx
+	mov al, input_buffer[bx]
+	mov input_buffer_curr, bx
+	
+	mov bx, opbuffer_length
+	mov opbuffer[bx], ah
+	inc bx
+	mov opbuffer[bx], al
+	inc bx
+	mov opbuffer_length, bx
+	
+	mov bx, ax
+	hxdb bl
+	put rbuffer, rbuffer_length, ah
+	put rbuffer, rbuffer_length, al
+	hxdb bh
+	put rbuffer, rbuffer_length, ah
+	put rbuffer, rbuffer_length, al
+	
+	swrite rbuffer, rbuffer_length, separator
+	
+	mov bx, input_buffer_curr
+	inc bx
+	mov ah, input_buffer[bx]
+	inc bx
+	mov al, input_buffer[bx]
+	mov input_buffer_curr, bx
+	
+	mov bx, opbuffer_length
+	mov opbuffer[bx], ah
+	inc bx
+	mov opbuffer[bx], al
+	inc bx
+	mov opbuffer_length, bx
+	
+	mov bx, ax
+	hxdb bl
+	put rbuffer, rbuffer_length, ah
+	put rbuffer, rbuffer_length, al
+	hxdb bh
+	put rbuffer, rbuffer_length, ah
+	put rbuffer, rbuffer_length, al
+	
+	pop bx ax
+	ret
+__comR2word endp
+;-------------------------------------
