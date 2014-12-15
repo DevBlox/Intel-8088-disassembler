@@ -193,3 +193,9 @@ wordRegBo macro nm
 	call __wordRegBo
 	pop bx
 endm
+;====================================
+; Compares 4 bits
+;====================================
+cmp4bit macro in1, in2
+	
+endm

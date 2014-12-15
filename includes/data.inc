@@ -61,5 +61,18 @@ rbuffer db 50 dup(0)
 rbuffer_size dw 50
 rbuffer_length dw 0
 
+; Raw instructions
+rawbuffer db 10 dup(0)
+rawbuffer_size dw 10
+rawbuffer_length dw 0
+
 ip_count dw 0
 curr_instruction db 0
+temp dw 0
+
+modvalue dw 0
+dirvalue dw 0
+sizvalue dw 0
+regvalue dw 0
+rmvalue dw 0
+segvalue dw 0

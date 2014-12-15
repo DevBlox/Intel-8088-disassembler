@@ -33,6 +33,14 @@ comsi equ 31
 comdi equ 32
 comR2word equ 33
 
+mod00 equ 0
+mod10 equ 1
+mod01 equ 2
+mod11 equ 3
+
+dirreg equ 1
+dirrm equ 0
+
 nmMov db 'mov $'
 nmPush db 'push $'
 nmPop db 'pop $'
@@ -82,6 +90,10 @@ nmAh db 'ah$'
 nmBh db 'bh$'
 nmCh db 'ch$'
 nmDh db 'dh$'
+nmEs db 'es$'
+nmCs db 'cs$'
+nmSs db 'ss$'
+nmDs db 'ds$'
 
 nmBxSi db 'bx + si$'
 nmBxDi db 'bx + di$'
@@ -124,8 +136,8 @@ bit1 db 088h, 089h, 08Ah, 08Bh, 08Eh, 08Ch, 0A0h
 ; Instruction completion tables
 ;================================================
 ope1 db comNotFin, comNotFin, comNotFin, comNotFin
-	 db comNotFin, comNotFin, comRbyte, comRword
-	 db comRbyte, comRword, comBalbo, comBclbo
+	 db comNotFin, comNotFin, comNotFin, comNotFin
+	 db comNotFin, comNotFin, comBalbo, comBclbo
 	 db comBdlbo, comBahbo, comBblbo, comBclbo
 	 db comBdhbo, comBblbo, comWaxbo, comWcxbo
 	 db comWdxbo, comWspbo, comWbxbo, comWbpbo
@@ -197,4 +209,11 @@ opnm dw offset nmMov, offset nmMov, offset nmMov, offset nmMov
 	 dw offset nmJnp, offset nmJl, offset nmJge, offset nmJle
 	 dw offset nmJg, offset nmJcxz, 0 ; Missing table entry?
 	 
+	 ; Stage 3 4bit values
 	 
+	 stg3_sz dw 7
+	 stg3 db 0A0h, 0C0h, 000h, 020h
+		  db 030h, 080h, 0F0h
+		  
+	 fnc3 dw fnA0h, fnC0h, fn00h, fn20h
+		  dw fn30h, fn80h, fnF0h

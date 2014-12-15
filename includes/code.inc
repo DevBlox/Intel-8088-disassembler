@@ -113,6 +113,7 @@ parser proc
 	
 @@exit:
 	push ax
+	call add_spaces
 	put opbuffer, opbuffer_length, '$'
 	swrite rbuffer, rbuffer_length, opbuffer
 	put rbuffer, rbuffer_length, ' '
@@ -154,6 +155,17 @@ put_ip_counter proc
 	pop dx cx bx ax
 	ret
 put_ip_counter endp
+;====================================
+; Adds a specific amount of spaces
+; to align text
+;====================================
+add_spaces proc
+@@loop:
+	put opbuffer, opbuffer_length, ' '
+	cmp opbuffer_length, 15
+	jl @@loop
+	ret
+add_spaces endp
 ;====================================
 ; Resets counter variables to null
 ;====================================
@@ -231,14 +243,14 @@ __wordRegBo proc
 	
 	mov bx, opbuffer_length
 	
-	push ax
-	hxdb al
+	mov temp, ax
+	hxdb ah
 	mov opbuffer[bx], ah
 	inc bx
 	mov opbuffer[bx], al
 	inc bx
-	pop ax
-	mov al, ah
+	mov ax, temp
+	mov dl, al
 	hxdb al
 	mov opbuffer[bx], ah
 	inc bx
@@ -246,11 +258,12 @@ __wordRegBo proc
 	inc bx
 	mov opbuffer_length, bx
 	
-	mov bx, ax
-	hxdb bl
+	mov ax, temp
+	hxdb al
 	put dopbuffer, dopbuffer_length, ah
 	put dopbuffer, dopbuffer_length, al
-	hxdb bh
+	mov ax, temp
+	hxdb ah
 	put dopbuffer, dopbuffer_length, ah
 	put dopbuffer, dopbuffer_length, al
 	
@@ -272,7 +285,6 @@ stage2 proc
 	cmpcall al, comRbyte, __comRbyte
 	cmpcall al, comRword, __comRword
 	cmpcall al, comRnull, __comRnull
-	cmpcall al, comNotFin, __comNotFin
 	cmpcall al, comBalbo, __comBalbo
 	cmpcall al, comBclbo, __comBclbo
 	cmpcall al, comBdlbo, __comBdlbo
@@ -302,6 +314,7 @@ stage2 proc
 	cmpcall al, comsi, __comsi
 	cmpcall al, comdi, __comdi
 	cmpcall al, comR2word, __comR2word
+	cmpcall al, comNotFin, stage3
 	
 	pop di si dx cx bx ax
 	ret
@@ -322,6 +335,7 @@ __comRbyte proc
 	mov input_buffer_curr, bx
 	
 	mov bx, dopbuffer_length
+	mov dl, al
 	hxdb al
 	mov dopbuffer[bx], ah
 	inc bx
@@ -330,9 +344,9 @@ __comRbyte proc
 	mov dopbuffer_length, bx
 	put dopbuffer, dopbuffer_length, 'h'
 	
-	hxdb al
-	put rbuffer, rbuffer_length, ah
-	put rbuffer, rbuffer_length, al
+	hxdb dl
+	put opbuffer, opbuffer_length, ah
+	put opbuffer, opbuffer_length, al
 	
 	pop bx ax
 	inc ip_count
@@ -382,11 +396,6 @@ __comRword endp
 __comRnull proc
 	ret
 __comRnull endp
-;-------------------------------------
-__comNotFin proc
-	swrite dopbuffer, dopbuffer_length, undef_op
-	ret
-__comNotFin endp
 ;-------------------------------------
 __comBalbo proc
 	byteRegBo nmAl
@@ -469,50 +478,62 @@ __comWdibo proc
 __comWdibo endp
 ;-------------------------------------
 __comes proc
+	swrite dopbuffer, dopbuffer_length, nmEs
 	ret
 __comes endp
 ;-------------------------------------
 __comcs proc
+	swrite dopbuffer, dopbuffer_length, nmCs
 	ret
 __comcs endp
 ;-------------------------------------
 __comss proc
+	swrite dopbuffer, dopbuffer_length, nmSs
 	ret
 __comss endp
 ;-------------------------------------
 __comds proc
+	swrite dopbuffer, dopbuffer_length, nmDs
 	ret
 __comds endp
 ;-------------------------------------
 __comax proc
+	swrite dopbuffer, dopbuffer_length, nmAx
 	ret
 __comax endp
 ;-------------------------------------
 __comcx proc
+	swrite dopbuffer, dopbuffer_length, nmCx
 	ret
 __comcx endp
 ;-------------------------------------
 __comdx proc
+	swrite dopbuffer, dopbuffer_length, nmDx
 	ret
 __comdx endp
 ;-------------------------------------
 __combx proc
+	swrite dopbuffer, dopbuffer_length, nmBx
 	ret
 __combx endp
 ;-------------------------------------
 __comsp proc
+	swrite dopbuffer, dopbuffer_length, nmSp
 	ret
 __comsp endp
 ;-------------------------------------
 __combp proc
+	swrite dopbuffer, dopbuffer_length, nmBp
 	ret
 __combp endp
 ;-------------------------------------
 __comsi proc
+	swrite dopbuffer, dopbuffer_length, nmSi
 	ret
 __comsi endp
 ;-------------------------------------
 __comdi proc
+	swrite dopbuffer, dopbuffer_length, nmDi
 	ret
 __comdi endp
 ;-------------------------------------
@@ -528,13 +549,12 @@ __comR2word proc
 	
 	mov bx, opbuffer_length
 	push ax
-	hxdb al
+	hxdb ah
 	mov opbuffer[bx], ah
 	inc bx
 	mov opbuffer[bx], al
 	inc bx
 	pop ax
-	mov al, ah
 	hxdb al
 	mov opbuffer[bx], ah
 	inc bx
@@ -561,13 +581,12 @@ __comR2word proc
 	
 	mov bx, opbuffer_length
 	push ax
-	hxdb al
+	hxdb ah
 	mov opbuffer[bx], ah
 	inc bx
 	mov opbuffer[bx], al
 	inc bx
 	pop ax
-	mov al, ah
 	hxdb al
 	mov opbuffer[bx], ah
 	inc bx
@@ -588,3 +607,83 @@ __comR2word proc
 	ret
 __comR2word endp
 ;-------------------------------------
+;=====================================
+; Stage 3, long instructions
+;=====================================
+stage3 proc	
+	ret
+stage3 endp
+;=====================================
+; Sets the mod value
+;=====================================
+getmod proc
+	; Finding mod
+	mov dl, 128
+	xor dl, al
+	cmp al, dl
+	je @@t0
+	jmp @@t1
+	
+@@t1:
+	mov dl, 64
+	xor dl, al
+	cmp al, dl
+	je @@modis11
+	jmp @@modis10
+	
+@@t0:
+	mov dl, 64
+	xor dl, al
+	cmp al, dl
+	je @@modis00
+	jmp @@modis01
+	
+@@modis10:
+	mov	modvalue, mod10
+	jmp @@exit
+	
+@@modis01:
+	mov modvalue, mod01
+	jmp @@exit
+	
+@@modis00:
+	mov modvalue, mod00
+	jmp @@exit
+	
+@@modis11:
+	mov modvalue, mod11
+	jmp @@exit
+	
+@@exit:
+	
+getmod endp
+;=====================================
+; Stage 3 logic functions
+;=====================================
+fn80h proc
+	ret
+fn80h endp
+;-------------------------------------
+fnA0h proc
+	ret
+fnA0h endp
+;-------------------------------------
+fnC0h proc
+	ret
+fnC0h endp
+;-------------------------------------
+fn00h proc
+	ret
+fn00h endp
+;-------------------------------------
+fn20h proc
+	ret
+fn20h endp
+;-------------------------------------
+fn30h proc
+	ret
+fn30h endp
+;-------------------------------------
+fnF0h proc
+	ret
+fnF0h endp
