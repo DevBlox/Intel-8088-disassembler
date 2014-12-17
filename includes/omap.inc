@@ -118,6 +118,9 @@ nmDiP db 'di + $'
 nmBpP db 'bp + $'
 nmBxP db 'bx + $'
 
+nmBytePtr db 'byte ptr $'
+nmWordPtr db 'word ptr $'
+
 bit1_num dw 139 ; Number of bit 1 versions
 ;================================================
 ; 1st bit of every instruction

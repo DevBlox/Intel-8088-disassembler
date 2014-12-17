@@ -30,8 +30,7 @@ create_fail db 'Failed to create output file', 10, 13, '$'
 ; Utility strings
 ;====================================
 endl db 10, 13, '$'
-undef_op db 'Undefined $'
-def_op db 'Defined $'
+undef_op db 'Unidenified $'
 hxd db '0123456789ABCDEF'
 separator db ', $'
 
