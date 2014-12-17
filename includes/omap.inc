@@ -38,9 +38,19 @@ mod10 equ 1
 mod01 equ 2
 mod11 equ 3
 
+regAlAx equ 0
+regClCx equ 1
+regDlDx equ 2
+regBlBx equ 3
+regAhSp equ 4
+regChBp equ 5
+regDhSi equ 6
+regBhDi equ 7
+
 dirreg equ 1
 dirrm equ 0
 
+nmNone db '$'
 nmMov db 'mov $'
 nmPush db 'push $'
 nmPop db 'pop $'
@@ -209,11 +219,32 @@ opnm dw offset nmMov, offset nmMov, offset nmMov, offset nmMov
 	 dw offset nmJnp, offset nmJl, offset nmJge, offset nmJle
 	 dw offset nmJg, offset nmJcxz, 0 ; Missing table entry?
 	 
-	 ; Stage 3 4bit values
+; Stage 3 4bit values
 	 
-	 stg3_sz dw 7
-	 stg3 db 0A0h, 0C0h, 000h, 020h
-		  db 030h, 080h, 0F0h
+stg3_sz dw 7
+stg3 db 0A0h, 0C0h, 000h, 020h
+	 db 030h, 080h, 0F0h
 		  
-	 fnc3 dw fnA0h, fnC0h, fn00h, fn20h
-		  dw fn30h, fn80h, fnF0h
+fnc3 dw fnA0h, fnC0h, fn00h, fn20h
+	 dw fn30h, fn80h, fnF0h
+		  
+rmtable_sz dw 8
+rmtable_mod00 dw offset nmBxSi, offset nmBxDi
+			  dw offset nmBpSi, offset nmBpDi
+			  dw offset nmSi, offset nmDi
+			  dw offset nmNone, offset nmBx
+			  
+rmtable_mod10_01 dw offset nmBxSiP, offset nmBxDiP
+				 dw offset nmBpSiP, offset nmBpDiP
+				 dw offset nmSiP, offset nmDiP
+				 dw offset nmBpP, offset nmBxP
+
+rmtable_mod11_byte dw offset nmAl, offset nmCl
+				   dw offset nmDl, offset nmBl
+				   dw offset nmAh, offset nmCh
+				   dw offset nmDh, offset nmBh
+
+rmtable_mod11_word dw offset nmAx, offset nmCx
+				   dw offset nmDx, offset nmBx
+				   dw offset nmSp, offset nmBp
+				   dw offset nmSi, offset nmDi

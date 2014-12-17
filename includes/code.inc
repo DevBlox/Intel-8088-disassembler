@@ -173,6 +173,13 @@ nullify proc
 	mov opbuffer_length, 0
 	mov rbuffer_length, 0
 	mov dopbuffer_length, 0
+	mov modvalue, 0
+	mov dirvalue, 0
+	mov sizvalue, 0
+	mov regvalue, 0
+	mov rmvalue, 0
+	mov segvalue, 0
+	mov widvalue ,0 
 	ret
 nullify endp
 ;====================================
@@ -611,8 +618,62 @@ __comR2word endp
 ; Stage 3, long instructions
 ;=====================================
 stage3 proc	
+
+	mov bx, input_buffer_curr
+	mov al, input_buffer[bx]
+	mov input_buffer_curr, bx
+	
+	mov cx, stg3_sz
+	mov bx, 0
+	
+@@cmploop:
+	cmp4bit al, stg3[bx]
+	cmp temp, 1
+	je @@found
+	inc bx
+	loop @@cmploop
+	jmp @@exit
+	
+@@found:
+	mov ax, bx
+	mov dx, 2
+	mul dx
+	mov bx, ax
+	mov ax, fnc3[bx]
+	call ax
+@@exit:
 	ret
 stage3 endp
+;=====================================
+; Loads 4 bits of al to cl
+;=====================================
+load4bits proc
+	chkbit al, 7
+	je @@bit1is1
+@@1:
+	chkbit al, 6
+	je @@bit2is1
+@@2:
+	chkbit al, 5
+	je @@bit3is1
+@@3:
+	chkbit al, 4
+	je @@bit4is1
+	jmp @@exit
+@@bit1is1:
+	add cl, 128
+	jmp @@1
+@@bit2is1:
+	add cl, 64
+	jmp @@2
+@@bit3is1:
+	add cl, 32
+	jmp @@3
+@@bit4is1:
+	add cl, 16
+@@exit:
+	ret
+load4bits endp
 ;=====================================
 ; Sets the mod value
 ;=====================================
@@ -661,6 +722,23 @@ getmod endp
 ; Stage 3 logic functions
 ;=====================================
 fn80h proc
+	mov bx, input_buffer_curr
+	mov al, input_buffer[bx]
+	chkbit al, 7
+	je @@subgorup1
+	jmp @@subgorup2
+@@subgorup1:
+	chkbit al, 6
+	jne @@reuse
+	;call segmov
+	jmp @@exit
+	
+@@reuse:
+	call fn20h
+	jmp @@exit
+	
+@@subgorup2:
+@@exit:
 	ret
 fn80h endp
 ;-------------------------------------
@@ -677,6 +755,82 @@ fn00h proc
 fn00h endp
 ;-------------------------------------
 fn20h proc
+	mov bx, input_buffer_curr
+	mov al, input_buffer[bx]
+	chkbit al, 1
+	je @@diris1
+	mov dirvalue, dirrm
+@@1:
+	chkbit al, 0
+	je @@widthis1
+	mov widvalue, 0
+	jmp @@findmod
+@@diris1:
+	mov dirvalue, dirreg
+	jmp @@1
+@@widthis1:
+	mov widvalue, 1
+@@findmod:
+	mov bx, input_buffer_curr
+	inc bx
+	mov al, input_buffer[bx]
+	mov input_buffer_curr, bx
+	inc ip_count
+	push ax
+	hxdb al
+	put opbuffer, opbuffer_length, ah
+	put opbuffer, opbuffer_length, al
+	pop ax
+	chkbit al, 7
+	je @@mod1
+@@2:
+	chkbit al, 6
+	je @@mod2
+	jmp @@findreg
+@@mod1:
+	add modvalue, 1
+	jmp @@2
+	
+@@mod2:
+	add modvalue, 2
+@@findreg:
+	chkbit al, 5
+	je @@reg1
+@@r1:
+	chkbit al, 4
+	je @@reg2
+@@r2:
+	chkbit al, 3
+	je @@reg3
+	jmp @@findrm
+@@reg1:
+	add regvalue, 4
+	jmp @@r1
+@@reg2:
+	add regvalue, 2
+	jmp @@r2
+@@reg3:
+	add regvalue, 1
+@@findrm:
+	chkbit al, 2
+	je @@rm1
+@@m1:
+	chkbit al, 1
+	je @@rm2
+@@m2:
+	chkbit al, 0
+	je @@rm3
+	jmp @@allfound
+@@rm1:
+	add rmvalue, 4
+	jmp @@m1
+@@rm2:
+	add rmvalue, 2
+	jmp @@m2
+@@rm3:
+	add rmvalue, 1
+@@allfound:
+	call parse_compex
 	ret
 fn20h endp
 ;-------------------------------------
@@ -687,3 +841,165 @@ fn30h endp
 fnF0h proc
 	ret
 fnF0h endp
+;#####################################
+parse_compex proc
+	cmp dirvalue, dirreg
+	je @@toreg
+	jmp @@tomemreg
+@@toreg:
+	cmp widvalue, 1
+	je @@wide1
+	jmp @@wide2
+@@wide1:
+	call print_reg_word
+	swrite dopbuffer, dopbuffer_length, separator
+	jmp @@continuetoreg
+@@wide2:
+	call print_reg_byte
+	swrite dopbuffer, dopbuffer_length, separator
+@@continuetoreg:
+	call by_mod
+	jmp @@exit
+@@tomemreg:
+	call by_mod
+	swrite dopbuffer, dopbuffer_length, separator
+	cmp widvalue, 1
+	je @@wide3
+	jmp @@wide4
+@@wide3:
+	call print_reg_word
+	jmp @@exit
+@@wide4:
+	call print_reg_byte
+@@exit:
+	ret
+parse_compex endp
+;======================================
+print_reg_byte proc
+	push ax bx
+	mov ax, regvalue
+	mov bx, 2
+	mul bx
+	mov bx, ax
+	mov bx, rmtable_mod11_byte[bx]
+	swrite dopbuffer, dopbuffer_length, [bx]
+	pop bx ax
+	ret
+print_reg_byte endp
+;===========================================
+print_reg_word proc
+	push ax bx
+	mov ax, regvalue
+	mov bx, 2
+	mul bx
+	mov bx, ax
+	mov bx, rmtable_mod11_word[bx]
+	swrite dopbuffer, dopbuffer_length, [bx]
+	pop bx ax
+	ret
+print_reg_word endp
+;=========================================
+by_mod proc
+	cmp modvalue, mod00
+	je @@modnooff_temp
+	cmp modvalue, mod11
+	je @@modtoreg_temp
+	jmp @@continueafter
+@@modnooff_temp:
+	jmp @@modnooff
+@@modtoreg_temp:
+	jmp @@modtoreg
+@@continueafter:
+	mov ax, rmvalue
+	mov bx, 2
+	mul bx
+	mov bx, ax
+	put dopbuffer, dopbuffer_length, '['
+	mov bx, rmtable_mod10_01[bx]
+	swrite dopbuffer, dopbuffer_length, [bx]
+	mov bx, input_buffer_curr
+	inc bx
+	mov al, input_buffer[bx]
+	inc bx
+	mov ah, input_buffer[bx]
+	mov input_buffer_curr, bx
+	add ip_count, 2
+	push ax
+	hxdb ah
+	put dopbuffer, dopbuffer_length, ah
+	put dopbuffer, dopbuffer_length, al
+	pop ax
+	push ax
+	hxdb al
+	put dopbuffer, dopbuffer_length, ah
+	put dopbuffer, dopbuffer_length, al
+	put opbuffer, opbuffer_length, ah
+	put opbuffer, opbuffer_length, ah
+	pop ax
+	hxdb ah
+	put opbuffer, opbuffer_length, ah
+	put opbuffer, opbuffer_length, al
+	put dopbuffer, dopbuffer_length, ']'
+@@modnooff:
+	mov ax, rmvalue
+	mov bx, 2
+	mul bx
+	mov bx, ax
+	put dopbuffer, dopbuffer_length, '['
+	mov bx, rmtable_mod00[bx]
+	cmp bx, offset nmNone
+	je @@2byteaddrr
+	swrite dopbuffer, dopbuffer_length, [bx]
+	jmp @@noaddrr
+@@2byteaddrr:
+	call addaddr2bytes
+@@noaddrr:
+	put dopbuffer, dopbuffer_length, ']'
+	jmp @@exit
+@@modtoreg:
+	mov ax, rmvalue
+	mov bx, 2
+	mul bx
+	mov bx, ax
+	cmp widvalue, 1
+	je @@wordreg
+	mov bx, rmtable_mod11_byte[bx]
+	swrite dopbuffer, dopbuffer_length, rmtable_mod11_byte[bx]
+	jmp @@exit
+@@wordreg:
+	mov ax, bx
+	mov bx, 2
+	mul bx
+	mov bx, ax
+	mov bx, rmtable_mod11_word[bx]
+	swrite dopbuffer, dopbuffer_length, [bx]
+@@exit:
+	ret
+by_mod endp
+;======================================
+addaddr2bytes proc
+	mov bx, input_buffer_curr
+	inc bx
+	mov ah, input_buffer[bx]
+	inc bx
+	mov al, input_buffer[bx]
+	mov input_buffer_curr, bx
+	
+	push ax
+	hxdb al
+	put dopbuffer, dopbuffer_length, ah
+	put dopbuffer, dopbuffer_length, al
+	pop ax
+	push ax
+	hxdb ah
+	put dopbuffer, dopbuffer_length, ah
+	put dopbuffer, dopbuffer_length, al
+	put opbuffer, opbuffer_length, ah
+	put opbuffer, opbuffer_length, al
+	pop ax
+	hxdb al
+	put opbuffer, opbuffer_length, ah
+	put opbuffer, opbuffer_length, al
+	put dopbuffer, dopbuffer_length, 'h'
+	ret
+addaddr2bytes endp

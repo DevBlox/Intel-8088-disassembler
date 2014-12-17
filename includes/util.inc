@@ -194,8 +194,40 @@ wordRegBo macro nm
 	pop bx
 endm
 ;====================================
-; Compares 4 bits
+; Checks x bit, zf = 1 if bit is 1
 ;====================================
-cmp4bit macro in1, in2
-	
+chkbit macro value, bit
+	local @@exit
+	push ax dx cx
+	mov cl, bit
+	mov al, value
+	mov dl, 1
+	shl dl, cl
+	and al, dl
+@@exit:
+	cmp dl, al
+	pop cx dx ax	
+endm
+;====================================
+; Compares first 4 bits
+;====================================
+cmp4bit macro x, y
+	local @@equal
+	local @@notequal
+	local @@exit
+	push ax bx cx
+	mov al, x
+	mov dl, y
+	mov cl, 0	
+	call load4bits	
+	cmp cl, dl
+	je @@equal
+	jmp @@notequal
+@@equal:
+	mov temp, 1
+	jmp @@exit
+@@notequal:
+	mov temp, 0
+@@exit	:
+	pop cx bx ax
 endm

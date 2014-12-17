@@ -69,6 +69,7 @@ rawbuffer_length dw 0
 ip_count dw 0
 curr_instruction db 0
 temp dw 0
+temp2 dw 0
 
 modvalue dw 0
 dirvalue dw 0
@@ -76,3 +77,4 @@ sizvalue dw 0
 regvalue dw 0
 rmvalue dw 0
 segvalue dw 0
+widvalue dw 0
