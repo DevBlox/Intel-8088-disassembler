@@ -251,3 +251,6 @@ rmtable_mod11_word dw offset nmAx, offset nmCx
 				   dw offset nmDx, offset nmBx
 				   dw offset nmSp, offset nmBp
 				   dw offset nmSi, offset nmDi
+F0names dw offset nmInc, offset nmDec, offset nmCall
+		dw offset nmCall, offset nmMul, offset nmJmp 
+		dw offset nmDiv

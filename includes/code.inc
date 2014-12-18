@@ -953,6 +953,42 @@ fn30h endp
 fnF0h proc
 	mov bx, input_buffer_curr
 	mov al, input_buffer[bx]
+	mov curr_instruction, al
+	inc bx
+	mov al, input_buffer[bx]
+	mov input_buffer_curr, bx
+	inc ip_count
+	push ax
+	hxdb al
+	put opbuffer, opbuffer_length, ah
+	put opbuffer, opbuffer_length, al
+	pop ax
+	chkbit al, 5
+	je @@ins1
+	jmp @@02
+@@ins1:
+	add regvalue, 4
+@@02:
+	chkbit al, 4
+	je @@ins2
+	jmp @@03
+@@ins2:
+	add regvalue, 2
+@@03:
+	chkbit al, 3
+	je @@ins3
+	jmp @@endins
+@@ins3:
+	add regvalue, 1
+@@endins:
+	mov ax, regvalue
+	mov bx, 2
+	mul bx
+	mov bx, ax
+	lea si, F0names[bx]
+	mov si, [si]
+	mov dopbuffer_length, 0
+	swrite dopbuffer, dopbuffer_length, [si]
 	call jmpcalllogic
 	ret
 fnF0h endp
@@ -1176,10 +1212,7 @@ parse_bo_mov endp
 ;=================================
 jmpcalllogic proc
 	mov bx, input_buffer_curr
-	inc bx
 	mov al, input_buffer[bx]
-	mov input_buffer_curr, bx
-	inc ip_count
 	chkbit al, 7
 	je @@mod1
 	jmp @@02
@@ -1214,22 +1247,35 @@ jmpcalllogic proc
 	mov bx, 2
 	mul bx
 	mov bx, ax
-	put dopbuffer, dopbuffer_length, '['
 	cmp modvalue, mod00
 	je @@nooff
 	jmp @@001
 @@nooff:
-	swrite dopbuffer, dopbuffer_length, rmtable_mod00[bx]
+	lea si, rmtable_mod00[bx]
+	mov si, [si]
+	swrite dopbuffer, dopbuffer_length, [si]
 	jmp @@endmod
 @@001:
 	cmp modvalue, mod11
 	je @@onreg
 	jmp @@002
 @@onreg:
-	swrite dopbuffer, dopbuffer_length, rmtable_mod11_word[bx]
-	jmp @@endmod
+	cmp widvalue, 1
+	je @@widereg
+	jmp @@bytereg
+@@widereg:
+	lea si, rmtable_mod11_word[bx]
+	jmp @@prreg
+@@bytereg:
+	lea si, rmtable_mod11_byte[bx]
+@@prreg:
+	mov si, [si]
+	swrite dopbuffer, dopbuffer_length, [si]
+	jmp @@exit
 @@002:
-	swrite dopbuffer, dopbuffer_length, rmtable_mod10_01[bx]
+	lea si, rmtable_mod10_01[bx]
+	mov si, [si]
+	swrite dopbuffer, dopbuffer_length, si[bx]
 @@endmod:
 	mov bx, input_buffer_curr
 	inc bx
@@ -1252,7 +1298,8 @@ jmpcalllogic proc
 	hxdb al
 	put opbuffer, opbuffer_length, ah
 	put opbuffer, opbuffer_length, al
-	put dopbuffer, dopbuffer_length, ']'
 	add ip_count, 2
+@@exit:
 	ret
 jmpcalllogic endp
+;=====================================
