@@ -83,6 +83,7 @@ nmJge db 'jge $'
 nmJle db 'nmJle'
 nmJg db 'jg $'
 nmJcxz db 'jcxz $'
+nmXor db 'xor $'
 
 nmAx db 'ax$'
 nmBx db 'bx$'
@@ -121,7 +122,7 @@ nmBxP db 'bx + $'
 nmBytePtr db 'byte ptr $'
 nmWordPtr db 'word ptr $'
 
-bit1_num dw 141 ; Number of bit 1 versions
+bit1_num dw 151 ; Number of bit 1 versions
 ;================================================
 ; 1st bit of every instruction
 ;================================================
@@ -145,7 +146,8 @@ bit1 db 088h, 089h, 08Ah, 08Bh, 08Eh, 08Ch, 0A0h
 	 db 0E2h, 0CDh, 070h, 071h, 072h, 073h, 074h
 	 db 075h, 076h, 077h, 078h, 079h, 07Ah, 07Bh
 	 db 07Ch, 07Dh, 07Eh, 07Fh, 0E3h, 033h, 0CAh
-	 db 0CBh
+	 db 0CBh, 030h, 031h, 032h, 033h, 035h, 034h
+	 db 080h, 081h, 082h, 083h
 ;================================================
 ; Instruction completion tables
 ;================================================
@@ -184,7 +186,9 @@ ope1 db comNotFin, comNotFin, comNotFin, comNotFin
 	 db comRbyte, comRbyte, comRbyte, comRbyte
 	 db comRbyte, comRbyte, comRbyte, comRbyte
 	 db comRbyte, comRbyte, comRbyte, comRword
-	 db comFin
+	 db comFin, comNotFin, comNotFin, comNotFin
+	 db comNotFin, comNotFin, comNotFin, comNotFin
+	 db comNotFin, comNotFin, comNotFin
 ;================================================
 ; Instruction name table
 ;================================================	 
@@ -223,7 +227,9 @@ opnm dw offset nmMov, offset nmMov, offset nmMov, offset nmMov
 	 dw offset nmJa, offset nmJs, offset nmJns, offset nmJp
 	 dw offset nmJnp, offset nmJl, offset nmJge, offset nmJle
 	 dw offset nmJg, offset nmJcxz, offset nmNone, offset nmRet
-	 dw offset nmRet
+	 dw offset nmRet, offset nmXor, offset nmXor, offset nmXor
+	 dw offset nmXor, offset nmXor, offset nmXor, offset nmXor
+	 dw offset nmXor, offset nmXor, offset nmXor
 	 
 ; Stage 3 4bit values
 	 
