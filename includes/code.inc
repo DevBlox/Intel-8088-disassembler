@@ -1092,7 +1092,7 @@ by_mod proc
 	cmp widvalue, 1
 	je @@wordreg
 	mov bx, rmtable_mod11_byte[bx]
-	swrite dopbuffer, dopbuffer_length, rmtable_mod11_byte[bx]
+	swrite dopbuffer, dopbuffer_length, [bx]
 	jmp @@exit
 @@wordreg:
 	mov ax, bx
