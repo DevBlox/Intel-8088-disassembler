@@ -29,6 +29,11 @@ Pradzia:
 ;	MOV	ax, @data
 ;	MOV	ds, ax
 
+	db 11000011b ; ret
+	db 11000010b, 32h, 21h ;ret 2132h
+	db 11001011b ; ret
+	db 11001010b, 98h, 76h ; ret 7698h
+
 ;****nuskaito eilute****
 	MOV	ah, 9
 	MOV	dx, offset ivesk

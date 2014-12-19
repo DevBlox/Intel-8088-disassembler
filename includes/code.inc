@@ -369,34 +369,25 @@ __comRword proc
 	inc bx
 	mov al, input_buffer[bx]
 	mov input_buffer_curr, bx
+	add ip_count, 2
 	
-	mov bx, dopbuffer_length
 	push ax
 	hxdb al
-	mov dopbuffer[bx], ah
-	inc bx
-	mov dopbuffer[bx], al
-	inc bx
+	put dopbuffer, dopbuffer_length, ah
+	put dopbuffer, dopbuffer_length, al
 	pop ax
-	mov al, ah
+	push ax
+	hxdb ah
+	put dopbuffer, dopbuffer_length, ah
+	put dopbuffer, dopbuffer_length, al
+	put opbuffer, opbuffer_length, ah
+	put opbuffer, opbuffer_length, al
+	pop ax
 	hxdb al
-	mov dopbuffer[bx], ah
-	inc bx
-	mov dopbuffer[bx], al
-	inc bx
-	mov dopbuffer_length, bx
+	put opbuffer, opbuffer_length, ah
+	put opbuffer, opbuffer_length, al
 	put dopbuffer, dopbuffer_length, 'h'
-	
-	mov bx, ax
-	hxdb bl
-	put dopbuffer, dopbuffer_length, ah
-	put dopbuffer, dopbuffer_length, al
-	hxdb bh
-	put dopbuffer, dopbuffer_length, ah
-	put dopbuffer, dopbuffer_length, al
-	
 	pop bx ax
-	add ip_count, 2
 	ret
 __comRword endp
 ;-------------------------------------
@@ -887,7 +878,6 @@ fn20h proc
 @@mod1:
 	add modvalue, 1
 	jmp @@2
-	
 @@mod2:
 	add modvalue, 2
 @@findreg:
