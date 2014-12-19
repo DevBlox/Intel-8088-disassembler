@@ -724,21 +724,7 @@ getmod endp
 fn80h proc
 	mov bx, input_buffer_curr
 	mov al, input_buffer[bx]
-	chkbit al, 7
-	je @@subgorup1
-	jmp @@subgorup2
-@@subgorup1:
-	chkbit al, 6
-	jne @@reuse
-	;call segmov
-	jmp @@exit
-	
-@@reuse:
 	call fn20h
-	jmp @@exit
-	
-@@subgorup2:
-@@exit:
 	ret
 fn80h endp
 ;-------------------------------------
